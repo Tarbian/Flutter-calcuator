@@ -348,9 +348,15 @@ class _CalculatorState extends State<CalculatorScreen> {
     try {
       Expression expression = parser.parse(finalizeInput);
       ContextModel contextModel = ContextModel();
-      dynamic evalute = expression.evaluate(EvaluationType.REAL, contextModel);
-      result = evalute.toString();
-      history.add('$userInput = $result');
+      dynamic evaluate = expression.evaluate(EvaluationType.REAL, contextModel);
+      result = evaluate.toString();
+
+      if (history.isEmpty || history.last != '$userInput = $result') {
+        history.add('$userInput = $result');
+        setState(() {
+          _saveData();
+        });
+      }
     } catch (e) {
       result = '0.0';
     }
