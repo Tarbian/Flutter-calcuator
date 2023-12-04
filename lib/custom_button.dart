@@ -7,7 +7,8 @@ class CustomButton extends StatelessWidget {
   final double height;
   final double width;
   final Color? color;
-
+  // final Icon?;
+//Icon(Icons.arrow_back)
   const CustomButton({
     super.key,
     required this.child,
@@ -24,9 +25,9 @@ class CustomButton extends StatelessWidget {
       height: height,
       width: width,
       child: ElevatedButton(
-         style: ElevatedButton.styleFrom(
-           backgroundColor: color ?? Theme.of(context).colorScheme.primary,
-         ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color ?? Theme.of(context).colorScheme.primary,
+        ),
         onPressed: onPressed,
         onLongPress: onLongPress,
         child: DefaultTextStyle(
