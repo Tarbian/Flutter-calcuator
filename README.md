@@ -1,2 +1,2 @@
-![image](https://github.com/Tarbian/Flutter-calcuator/assets/71370595/dfec22fd-8521-4c2c-b6b3-85d14a59aabe)
-![image](https://github.com/Tarbian/Flutter-calcuator/assets/71370595/e694c166-481e-4483-8e77-df70552cc19e)
+![image](https://github.com/Tarbian/Flutter-calcuator/assets/71370595/b2aed12a-1962-49e5-b892-7d2634342c34)
+![image](https://github.com/Tarbian/Flutter-calcuator/assets/71370595/68e58d3f-1cd5-4855-ac9b-ab1afb30550b)
