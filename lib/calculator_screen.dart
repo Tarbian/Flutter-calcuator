@@ -17,6 +17,7 @@ class _CalculatorState extends State<CalculatorScreen> {
   String result = '0.0';
   bool dotAdded = false;
   int _themeValue = 2;
+  List<String> history = [];
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _CalculatorState extends State<CalculatorScreen> {
     setState(() {
       userInput = prefs.getString('userInput') ?? '';
       result = prefs.getString('result') ?? '0.0';
+      history = prefs.getStringList('history') ?? [];
     });
   }
 
@@ -36,6 +38,7 @@ class _CalculatorState extends State<CalculatorScreen> {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('userInput', userInput);
     prefs.setString('result', result);
+    prefs.setStringList('history', history);
   }
 
   @override
@@ -44,6 +47,12 @@ class _CalculatorState extends State<CalculatorScreen> {
       appBar: AppBar(
         title: const Text('Calculator'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              _showHistoryDialog();
+            },
+          ),
           DropdownButton(
             items: const [
               DropdownMenuItem(
@@ -341,6 +350,7 @@ class _CalculatorState extends State<CalculatorScreen> {
       ContextModel contextModel = ContextModel();
       dynamic evalute = expression.evaluate(EvaluationType.REAL, contextModel);
       result = evalute.toString();
+      history.add('$userInput = $result');
     } catch (e) {
       result = '0.0';
     }
@@ -362,5 +372,50 @@ class _CalculatorState extends State<CalculatorScreen> {
       }
       _themeValue = index;
     });
+  }
+
+  void _showHistoryDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('History'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              itemCount: history.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    ListTile(
+                      title: SelectableText(history[index]),
+                    ),
+                    const Divider(),
+                  ],
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Close'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  history.clear();
+                  _saveData();
+                });
+                Navigator.of(context).pop();
+              },
+              child: const Text('Clear'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
