@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'custom_button.dart';
 import 'package:math_expressions/math_expressions.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -15,6 +17,26 @@ class _CalculatorState extends State<CalculatorScreen> {
   String result = '0.0';
   bool dotAdded = false;
   int _themeValue = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userInput = prefs.getString('userInput') ?? '';
+      result = prefs.getString('result') ?? '0.0';
+    });
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('userInput', userInput);
+    prefs.setString('result', result);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +80,7 @@ class _CalculatorState extends State<CalculatorScreen> {
                     children: [
                       Align(
                         alignment: Alignment.bottomRight,
-                        child: Text(
+                        child: SelectableText(
                           userInput.toString(),
                           style: const TextStyle(
                             fontSize: 30,
@@ -71,12 +93,18 @@ class _CalculatorState extends State<CalculatorScreen> {
                       ),
                       Align(
                         alignment: Alignment.bottomRight,
-                        child: Text(
-                          '=${result.toString()}',
-                          style: const TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepPurpleAccent,
+                        child: GestureDetector(
+                          onLongPress: () {
+                            final data = ClipboardData(text: result.toString());
+                            Clipboard.setData(data);
+                          },
+                          child: SelectableText(
+                            '= $result',
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurpleAccent,
+                            ),
                           ),
                         ),
                       ),
@@ -298,7 +326,9 @@ class _CalculatorState extends State<CalculatorScreen> {
     } else {
       userInput += operation;
     }
-    setState(() {});
+    setState(() {
+      _saveData();
+    });
   }
 
   void equalPress() {
@@ -314,6 +344,9 @@ class _CalculatorState extends State<CalculatorScreen> {
     } catch (e) {
       result = '0.0';
     }
+    setState(() {
+      _saveData();
+    });
   }
 
   void _themeChangeCallback(int index) {
